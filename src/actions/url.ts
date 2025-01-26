@@ -12,8 +12,6 @@ import {
 import { prisma } from "@/lib/prisma";
 import { incrementClickCount } from "./clicks";
 
-const { BASE_URL } = process.env;
-
 // export async function getOrCreateAnonymousId() {
 //   let anonymousId = cookies().get("anonymousId");
 

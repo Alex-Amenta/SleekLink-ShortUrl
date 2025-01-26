@@ -1,12 +1,10 @@
 import { delay } from "@/helpers/delay";
 import axios from "axios";
-import { getSession } from "next-auth/react";
 import { create } from "zustand";
 import { ModalStore, UrlStore } from "$/types/url";
 import {
   createShortUrl as postShortUrl,
   getUrlsByUserEmail,
-  getAllUrls,
   updateStatusUrl,
 } from "@/actions/url";
 
