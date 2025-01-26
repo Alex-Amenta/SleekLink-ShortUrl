@@ -11,7 +11,7 @@ import { ThemeIcon, useThemeToggle } from "@/hooks/useThemeToggle";
 import useModal from "@/hooks/useModal";
 
 const ModalUser = ({ userData }) => {
-  const { isOpen, closeModal, openModal, toggleModal } = useModal("ModalUser");
+  const { isOpen, closeModal, toggleModal } = useModal("ModalUser");
   const { theme, handleToggleTheme } = useThemeToggle();
 
   return (

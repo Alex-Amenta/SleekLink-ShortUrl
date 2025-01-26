@@ -1,4 +1,4 @@
-const Arrow19 = (props, forwardedRef) => (
+const Arrow19 = () => (
   <svg
   className="max-sm:w-32 max-sm:h-16 text-black/80 dark:text-white/80"
     width="245"

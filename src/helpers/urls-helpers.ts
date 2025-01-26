@@ -11,6 +11,7 @@ export const formatValidUrl = async (originalUrl: string) => {
     const response = await axios.head(originalUrl);
     return response.status === 200;
   } catch (error) {
+    console.log("Error al validar url:", error);
     return false;
   }
 };

@@ -23,6 +23,7 @@ export const verifyJwt = (token: string) => {
         const decoded = jwt.verify(token, SECRET_KEY);
         return decoded;
     } catch (error) {
+        console.log(error);
         throw new Error("Invalid JWT");
     }
 };

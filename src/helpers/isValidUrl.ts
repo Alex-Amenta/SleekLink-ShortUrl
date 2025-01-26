@@ -6,6 +6,7 @@ export const isValidUrl = async (originalUrl: string) => {
 
     return response.status;
   } catch (error) {
+    console.log("Error al validar url:", error);
     return false;
   }
 };
