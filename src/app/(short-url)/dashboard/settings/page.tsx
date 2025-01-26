@@ -6,7 +6,7 @@ import useModal from "@/hooks/useModal";
 import { motion } from "framer-motion";
 import { Trash2Icon, SaveIcon } from "lucide-react";
 import { signOut, useSession } from "next-auth/react";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { toast } from "react-toastify";
 import { useForm } from "react-hook-form";
 import Passwordinput from "@/components/input-password";
@@ -21,10 +21,12 @@ const SettingsPage = () => {
   } = useForm();
   const { data: session } = useSession();
 
+  const isGoogleUser = session?.user?.provider === "google";
+
   const { isOpen, closeModal, openModal } = useModal("ConfirmDeleteUser");
   const [isChangedPassword, setIsChangedPassword] = useState(false);
 
-  const handleDeleteUser = async () => {
+  const handleDeleteUser = useCallback(async () => {
     const userId = session?.user?.id;
     const result = await deleteUserAccount(userId);
 
@@ -37,7 +39,7 @@ const SettingsPage = () => {
     } else {
       toast.error(result.message);
     }
-  };
+  }, [session?.user?.id]);
 
   const handleUpdateUser = handleSubmit(async (data) => {
     const { name, password } = data;
@@ -81,9 +83,16 @@ const SettingsPage = () => {
         className="mb-10 flex flex-col justify-center items-start p-4 rounded-md bg-white dark:bg-[#131313] dark:border-white/20 border shadow-lg"
       >
         <h3 className="font-bold text-2xl">Configuración de cuenta</h3>
-        <p className="mb-5 text-black/70 dark:text-white/70">
-          Actualizá tu información personal:
-        </p>
+        {isGoogleUser ? (
+          <p className="mb-5 text-red-900 dark:text-red-500">
+            ⚠ Estas registado con Google, por ello no puedes modificar tus
+            datos!
+          </p>
+        ) : (
+          <p className="mb-5 text-black/70 dark:text-white/70">
+            Actualizá tu información personal:
+          </p>
+        )}
 
         <form
           onSubmit={handleUpdateUser}
@@ -94,9 +103,12 @@ const SettingsPage = () => {
           </label>
           <input
             {...register("name", { required: "El nombre es requerido" })}
-            className="mb-5 p-2 rounded-md border w-full md:w-[70%]"
+            className="disabled:bg-black/10 disabled:text-black/70
+             disabled:dark:text-white/70 disabled:dark:bg-white/10 
+            mb-5 p-2 rounded-md border w-full md:w-[70%]"
             type="text"
             defaultValue={session?.user?.name}
+            disabled={isGoogleUser}
           />
 
           <label className="mb-2" htmlFor="">
@@ -112,7 +124,7 @@ const SettingsPage = () => {
             ⚠ El correo electrónico no puede ser modificado por seguridad.
             Contacta soporte si necesitas cambiarlo.
           </p>
-          {session?.user?.provider !== "google" && (
+          {!isGoogleUser && (
             <>
               <CustomHr />
               <label className="mb-5">
@@ -140,7 +152,9 @@ const SettingsPage = () => {
 
           <button
             type="submit"
-            className="my-5 border p-2 rounded-md self-end hover:bg-green-900
+            disabled={isGoogleUser}
+            className="disabled:bg-green-900 disabled:text-white/40 
+            my-5 border p-2 rounded-md self-end hover:bg-green-900
             bg-green-700 text-white shadow-md transition"
           >
             <span className="inline-flex align-middle mr-1">

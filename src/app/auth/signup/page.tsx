@@ -26,14 +26,14 @@ const RegisterPage = () => {
     startLoading();
     await delay(2000);
 
-    const res = await signupUser(data);
+    const response = await signupUser(data);
 
-    if (res.success) {
+    if (response.success) {
       toast.success("Usuario creado exitosamente");
       router.push("/auth/login");
-      router.refresh();
+      // router.refresh();
     } else {
-      toast.error(res.message);
+      toast.error(response.message);
     }
 
     stopLoading();

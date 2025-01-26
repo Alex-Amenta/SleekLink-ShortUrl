@@ -2,7 +2,13 @@ import { delay } from "@/helpers/delay";
 import axios from "axios";
 import { getSession } from "next-auth/react";
 import { create } from "zustand";
-import { ModalStore, UrlStore } from "../../types/url";
+import { ModalStore, UrlStore } from "$/types/url";
+import {
+  createShortUrl as postShortUrl,
+  getUrlsByUserEmail,
+  getAllUrls,
+  updateStatusUrl,
+} from "@/actions/url";
 
 export const useModalStore = create<ModalStore>((set, get) => ({
   modals: {},
@@ -32,86 +38,53 @@ export const useUrlStore = create<UrlStore>((set, get) => ({
   loading: false,
   isLoaded: false,
 
-  createShortUrl: async (title, originalUrl, customDomain: string | null = null) => {
+  createShortUrl: async (
+    title: string,
+    originalUrl: string,
+    customDomain: string | null = null
+  ) => {
     set({ loading: true, error: null });
 
     try {
-      const session = await getSession();
-      const response = await axios.post(
-        "/api/url",
-        { title, originalUrl, customDomain },
-        {
-          withCredentials: true,
-          headers: {
-            Authorization: `Bearer ${session?.accessToken}`,
-          },
-        }
-      );
-      set((state) => {
-        const newUrlData = {
-          urls: response.data.user_id
-            ? [response.data, ...state.urls]
-            : state.urls,
-          nonAuthUrls: response.data.user_id
-            ? state.nonAuthUrls
-            : [response.data, ...state.nonAuthUrls],
-          shortUrl: response.data,
-          loading: false,
-        };
-        return newUrlData;
+      const result = await postShortUrl({
+        title,
+        originalUrl,
+        customDomain: customDomain || undefined,
       });
 
-      return { success: true };
+      if (result.success) {
+        set((state) => {
+          const newUrlData = {
+            urls: result.data?.user_id
+              ? [result.data, ...state.urls]
+              : state.urls,
+            nonAuthUrls: result.data?.user_id
+              ? state.nonAuthUrls
+              : [result.data, ...state.nonAuthUrls],
+            shortUrl: result.data,
+            loading: false,
+          };
+
+          return newUrlData;
+        });
+
+        return { success: true };
+      } else {
+        set({
+          error: result.message,
+          loading: false,
+        });
+        return { success: false, message: result.message };
+      }
     } catch (error: unknown) {
-      const errorMessage = error.response
-        ? error.response.data.message
-        : "An error occurred";
+      console.error("Error al crear URL:", error);
+      const errorMessage =
+        (error as any)?.message || "An unexpected error occurred";
       set({
         error: errorMessage,
         loading: false,
       });
       return { success: false, message: errorMessage };
-    }
-  },
-
-  fetchUrls: async () => {
-    set({ loading: true, error: null });
-
-    try {
-      const response = await axios.get("/api/url", { withCredentials: true });
-
-      set({
-        urls: response.data.result,
-        loading: false,
-      });
-    } catch (error: unknown) {
-      set({
-        error: error.response
-          ? error.response.data.message
-          : "An error occurred",
-        loading: false,
-      });
-    }
-  },
-
-  getUrlById: async (urlId) => {
-    set({ loading: true, error: null });
-    try {
-      await delay(2000);
-
-      const response = await axios.get(`/api/url/${urlId}`);
-
-      set({
-        selectedUrl: response.data,
-        loading: false,
-      });
-    } catch (error) {
-      set({
-        error: error.response
-          ? error.response.data.message
-          : "An error occurred",
-        loading: false,
-      });
     }
   },
 
@@ -122,12 +95,10 @@ export const useUrlStore = create<UrlStore>((set, get) => ({
     try {
       await delay(2000);
 
-      const response = await axios.get("/api/url/user", {
-        withCredentials: true,
-      });
+      const data = await getUrlsByUserEmail();
 
       set({
-        urls: response.data,
+        urls: data,
         loading: false,
         isLoaded: true,
       });
@@ -171,25 +142,25 @@ export const useUrlStore = create<UrlStore>((set, get) => ({
   updateStatusUrl: async (id, active) => {
     set({ loading: true, error: null });
     try {
-      const response = await axios.put(`/api/url/${id}`, { active });
+      const response = await updateStatusUrl(id, active);
 
-      if (response.status === 200) {
+      if (response.success) {
         set((state) => ({
           urls: state.urls.map((url) =>
             url.id === id ? { ...url, active } : url
           ),
           loading: false,
         }));
-        return { success: true, message: response.data.message };
+        return { success: true, message: response.message };
       } else {
         return { success: false, error: "Failed to delete URL" };
       }
     } catch (error) {
-      console.error("Error deleting URL:", error);
+      console.error("Error updating status URL:", error);
       set({
         error: error.response
           ? error.response.data.message
-          : "An error occurred while deleting the URL",
+          : "An error occurred while updating status the URL",
         loading: false,
       });
     }

@@ -1,15 +1,15 @@
 "use client";
-import { signIn } from "next-auth/react";
-import Image from "next/image";
+import { loginUser } from "@/actions/user";
+import ButtonGoogle from "@/components/button-google";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "react-toastify";
 
 const LoginPage = () => {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm();
 
@@ -18,18 +18,15 @@ const LoginPage = () => {
   const onSubmit = handleSubmit(async (data) => {
     const { email, password } = data;
 
-    const res = await signIn("credentials", {
-      email,
-      password,
-      redirect: false,
-      callbackUrl: "/dashboard",
-    });
+    const response = await loginUser(email, password);
 
-    if (res?.error) {
-      toast.error(res.error);
+    if (response.error) {
+      setError("general", {
+        type: "server",
+        message: response.error,
+      });
     } else {
       router.push("/dashboard");
-      router.refresh();
     }
   });
 
@@ -45,19 +42,7 @@ const LoginPage = () => {
         </p>
 
         <div className="mt-5 flex flex-col justify-start items-stretch w-[70%]">
-          <button
-            type="button"
-            onClick={() => signIn("google", { callbackUrl: "/dashboard" })}
-            className="mt-2 mb-10 p-2 flex justify-center items-center gap-3 bg-white dark:hover:bg-white/85 text-black shadow-md border border-slate-300 rounded-md hover:border-slate-500 dark:hover:border-slate-400 transition"
-          >
-            <Image
-              src="/google.svg"
-              alt="Icono de google"
-              width={20}
-              height={20}
-            />
-            Iniciar Sesión con Google
-          </button>
+          <ButtonGoogle />
 
           <label>Email</label>
           <input
@@ -85,6 +70,13 @@ const LoginPage = () => {
             type="password"
             placeholder="******"
           />
+
+          {/* Error general de nexthauth */}
+          {errors.general && (
+            <p className="mt-2 text-sm text-red-500">
+              {errors.general.message}
+            </p>
+          )}
 
           {errors.password && (
             <p className="mt-2 text-sm text-red-500">

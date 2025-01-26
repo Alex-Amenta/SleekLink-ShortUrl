@@ -9,6 +9,13 @@ export interface Url {
   expirationDate: Date;
 }
 
+export interface UrlData extends Url {
+  shortCode: string;
+  user_id: string | null;
+  updatedAt: Date;
+  anonymous_id: string | null;
+}
+
 export interface UrlStore {
   urls: Url[];
   nonAuthUrls: Url[];
@@ -25,8 +32,6 @@ export interface UrlStore {
     originalUrl: string,
     customDomain?: string
   ) => Promise<{ success: boolean; message?: string }>;
-  fetchUrls: () => Promise<void>;
-  getUrlById: (urlId: string) => Promise<void>;
   getUrlsByUserEmail: () => Promise<void>;
   fetchAnonymousUrls: () => Promise<void>;
   filteredUrls: () => Url[];

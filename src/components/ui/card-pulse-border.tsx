@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { ChildrenProps } from "../../../types";
+import { ChildrenProps } from "$/types";
 
 interface CardPulseBorderProps extends ChildrenProps {
   viaColor?: string;

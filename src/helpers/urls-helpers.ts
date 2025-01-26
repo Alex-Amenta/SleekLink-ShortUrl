@@ -1,4 +1,4 @@
-import prisma from "@/lib/prisma";
+import { prisma } from "@/lib/prisma";
 import axios from "axios";
 import { nanoid } from "nanoid";
 
@@ -25,27 +25,31 @@ export const validateAndCheckDuplicateUrl = async (
 
   const existingUrl = await prisma.url.findFirst({
     where: {
-      originalUrl: originalUrl,
-      OR: [{ user_id: userId }, { anonymous_id: anonymousId }],
+      originalUrl,
+      ...(userId ? { user_id: userId } : { anonymous_id: anonymousId }),
     },
   });
 
-  if (existingUrl)
+  if (existingUrl) {
     return { success: false, message: "Esta URL ya fue acortada" };
+  }
 
   return { success: true };
 };
 
-export const getShortUrl = async (customDomain: string) => {
+export const generateShortUrl = async (
+  customDomain: string,
+  userId: string
+) => {
   if (customDomain) {
     const existingCustomDomain = await prisma.url.findUnique({
-      where: { shortCode: customDomain },
+      where: { shortCode: customDomain, user_id: userId },
     });
 
     if (existingCustomDomain)
       return {
         success: false,
-        message: "Este dominio personalizado ya existe",
+        message: "Ya usaste este dominio personalizado",
       };
 
     return {
@@ -73,10 +77,14 @@ export const getExpirationDate = async (session: object) => {
   return expirationDate;
 };
 
-export const checkUserOrAnonymousLimits = async (session, anonymousId: string) => {
+export const checkUserOrAnonymousLimits = async (
+  session,
+  anonymousId: string
+) => {
   let count;
+
   if (session) {
-    count = await prisma.url.count({ where: { user_id: session.user.id } });
+    count = await prisma.url.count({ where: { user_id: session.id } });
     if (count >= MAX_URLS_PER_USER)
       return {
         success: false,

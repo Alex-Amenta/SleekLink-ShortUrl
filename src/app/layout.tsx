@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { Poppins } from "next/font/google";
-import { ChildrenProps } from "../../types";
+import { ChildrenProps } from "$/types";
 import Provider from "../components/provider";
 import { ThemeProvider } from "next-themes";
 import ToastProvider from "@/components/toast-provider";
@@ -23,6 +23,10 @@ export const metadata: Metadata = {
     "SleekLink",
     "link analytics",
   ],
+  icons: {
+    icon: "/logo-sleeklink.png", // Ruta relativa al favicon
+    shortcut: "/logo-sleeklink.png", // Atajo para navegadores que lo soporten
+  },
 };
 
 export default function RootLayout({ children }: ChildrenProps) {
@@ -39,7 +43,7 @@ export default function RootLayout({ children }: ChildrenProps) {
             <ToastProvider>
               <Navbar />
               <div id="main-content" className="px-5 lg:px-48">
-                <BackgroundPage/>
+                <BackgroundPage />
                 {children}
               </div>
             </ToastProvider>

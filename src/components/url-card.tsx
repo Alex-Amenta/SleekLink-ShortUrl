@@ -8,7 +8,7 @@ import CopyText from "./ui/copy-text";
 import { AlarmClockIcon, TrendingUpIcon } from "lucide-react";
 import DeleteRestoreButton from "./delete-restore-button";
 import { useSession } from "next-auth/react";
-import { Url } from "../../types/url";
+import { Url } from "$/types/url";
 
 interface UrlCardProps extends Url {
   updateStatusUrl: (

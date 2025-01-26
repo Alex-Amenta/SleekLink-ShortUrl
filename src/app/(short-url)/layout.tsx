@@ -1,5 +1,5 @@
 import DashboardNavbar from "@/components/navbar-dashboard";
-import { ChildrenProps } from "../../../types";
+import { ChildrenProps } from "$/types";
 
 export const metadata = {
   title: "Dashboard - Settings | SleekLink",

@@ -2,7 +2,7 @@
 
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { ChildrenProps } from "../../types";
+import { ChildrenProps } from "$/types";
 
 const ToastProvider = ({ children }: ChildrenProps) => {
   return (

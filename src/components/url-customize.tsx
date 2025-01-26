@@ -15,7 +15,7 @@ const CustomizeUrl = () => {
     if (session?.user) {
       router.push("/dashboard");
     } else {
-      router.push("/login");
+      router.push("/auth/login");
       toast.info("Debes iniciar sesion para usar esta funcionalidad...");
     }
   };
