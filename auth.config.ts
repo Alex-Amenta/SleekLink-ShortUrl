@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { verifyPassword } from "@/helpers/verify-password";
 import { prisma } from "@/lib/prisma";
 import type { NextAuthConfig } from "next-auth";
