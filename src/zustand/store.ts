@@ -1,3 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { delay } from "@/helpers/delay";
 import axios from "axios";
 import { create } from "zustand";
