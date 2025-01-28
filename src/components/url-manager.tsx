@@ -14,7 +14,7 @@ const UrlManager = () => {
     if (!session) {
       fetchAnonymousUrls();
     }
-  }, [fetchAnonymousUrls]);
+  }, [session, fetchAnonymousUrls]);
 
   return (
     <>

@@ -9,7 +9,8 @@ import AnimatedContainer from "../animations/animated-container";
 import AnimatedItems from "../animations/animated-items";
 import { ThemeIcon, useThemeToggle } from "@/hooks/useThemeToggle";
 import useModal from "@/hooks/useModal";
-import { Session } from "$/types";
+import { Session } from "next-auth";
+import Image from "next/image";
 
 const ModalUser = ({ userData }: { userData: Session }) => {
   const { isOpen, closeModal, toggleModal } = useModal("ModalUser");
@@ -17,21 +18,23 @@ const ModalUser = ({ userData }: { userData: Session }) => {
 
   return (
     <>
-      {userData && (
+      {userData.user && (
         <button
           onClick={toggleModal}
           className="flex justify-center items-center gap-2 hover:scale-105 transition"
           type="button"
         >
           <span>
-            <img
+            <Image
               className="rounded-full w-12 border-2 border-green-600"
-              src={userData.image}
-              alt={`Imagen de ${userData.name}`}
+              src={userData.user?.image || "/google.svg"}
+              alt={`Imagen de ${userData.user.name}`}
+              height={48}
+              width={48}
             />
           </span>
 
-          <p className="hidden sm:flex font-bold">{userData.name}</p>
+          <p className="hidden sm:flex font-bold">{userData.user.name}</p>
         </button>
       )}
 
@@ -51,10 +54,10 @@ const ModalUser = ({ userData }: { userData: Session }) => {
             </div>
             <CustomHr spacing="mb-3" />
             <h3 className="mt-3 text-xl text-center font-semibold text-gray-900 dark:text-white">
-              {userData.name} 🖐
+              {userData.user.name} 🖐
             </h3>
             <p className="text-sm text-gray-500 text-center">
-              {userData.email}
+              {userData.user.email}
             </p>
             <div className="my-4 space-y-2">
               <AnimatedItems>

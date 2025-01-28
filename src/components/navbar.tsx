@@ -1,15 +1,13 @@
-"use client";
-
-import { useSession } from "next-auth/react";
 import Image from "next/image";
 import Link from "next/link";
 import ModalUser from "./ui/modals/user-modal";
 import ThemeSwitcher from "./ui/theme-switcher";
 import GithubIcon from "./ui/icons/social/github-icon";
 import LinkedinIcon from "./ui/icons/social/linkedin-icon";
+import { auth } from "$/auth";
 
-const Navbar = () => {
-  const { data: session } = useSession();
+const Navbar = async () => {
+  const session = await auth();
 
   return (
     <nav className="navbar_blur sticky top-0 z-10 mb-5 px-10 lg:px-48">
@@ -47,7 +45,7 @@ const Navbar = () => {
           </div>
 
           {session ? (
-            <ModalUser userData={session.user} />
+            <ModalUser userData={session} />
           ) : (
             <Link
               href="/auth/login"
