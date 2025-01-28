@@ -81,7 +81,7 @@ export const getExpirationDate = async (session: Session | null) => {
 };
 
 export const checkUserOrAnonymousLimits = async (
-  user: User | undefined,
+  user: { id: string } | null,
   anonymousId: string
 ) => {
   let count;

@@ -53,7 +53,6 @@ export async function getUrlsBySearchTerm(
       user: { email: userEmail },
       title: {
         contains: searchTerm,
-        mode: "insensitive",
       },
     },
   });
@@ -79,7 +78,7 @@ export async function getUrlById(urlId: string) {
 
 export async function getUrlsByUserEmail() {
   try {
-    const session = await auth();
+    const session: Session | null = await auth();
     const email = session?.user?.email;
 
     const urls = await prisma.url.findMany({
@@ -102,7 +101,7 @@ export async function createShortUrl(data: {
 }) {
   const { title, originalUrl, customDomain } = data;
   try {
-    const session = await auth();
+    const session: Session | null = await auth();
 
     let userId: string | null = null;
 
@@ -136,13 +135,15 @@ export async function createShortUrl(data: {
     const expirationDate = await getExpirationDate(session);
 
     // Verificar límites
-    const limitCheck = await checkUserOrAnonymousLimits(
-      session?.user,
-      anonymousId
-    );
+    if (session?.user && typeof session.user.id === "string") {
+      const limitCheck = await checkUserOrAnonymousLimits(
+        { id: session.user.id },
+        anonymousId as string
+      );
 
-    if (!limitCheck.success) {
-      return { success: false, message: limitCheck.message };
+      if (!limitCheck.success) {
+        return { success: false, message: limitCheck.message };
+      }
     }
 
     // Crear URL
@@ -150,8 +151,8 @@ export async function createShortUrl(data: {
       data: {
         title,
         originalUrl,
-        shortCode,
-        shortUrl,
+        shortCode: shortCode ?? "",
+        shortUrl: shortUrl ?? "",
         user_id: userId,
         anonymous_id: anonymousId,
         expirationDate,
