@@ -10,7 +10,7 @@ export default middleware((req) => {
   const isLoggedIn = !!auth?.user; // Verifica si el usuario está autenticado
 
   if (!isLoggedIn && nextUrl.pathname.startsWith("/dashboard")) {
-    NextResponse.redirect(new URL("/auth/login", nextUrl.origin));
+    NextResponse.redirect(new URL("/auth/login", nextUrl));
   }
 
   return NextResponse.next();
