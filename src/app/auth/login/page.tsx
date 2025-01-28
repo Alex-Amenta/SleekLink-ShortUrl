@@ -1,6 +1,7 @@
 "use client";
 import { loginUser } from "@/actions/user";
 import ButtonGoogle from "@/components/button-google";
+import { getErrorMessage } from "@/helpers/get-error-message";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
@@ -30,6 +31,10 @@ const LoginPage = () => {
     }
   });
 
+  const emailErrorMessage = getErrorMessage(errors.email);
+  const generalErrorMessage = getErrorMessage(errors.general);
+  const passwordErrorMessage = getErrorMessage(errors.password);
+
   return (
     <form
       onSubmit={onSubmit}
@@ -57,8 +62,8 @@ const LoginPage = () => {
             type="email"
             placeholder="sleeklink@gmail.com"
           />
-          {errors.email && (
-            <p className="mt-2 text-sm text-red-500">{errors.email.message}</p>
+          {emailErrorMessage && (
+            <p className="mt-2 text-sm text-red-500">{emailErrorMessage}</p>
           )}
 
           <label className="mt-5">Password</label>
@@ -72,15 +77,15 @@ const LoginPage = () => {
           />
 
           {/* Error general de nexthauth */}
-          {errors.general && (
+          {generalErrorMessage && (
             <p className="mt-2 text-sm text-red-500">
-              {errors.general.message}
+              {generalErrorMessage}
             </p>
           )}
 
-          {errors.password && (
+          {passwordErrorMessage && (
             <p className="mt-2 text-sm text-red-500">
-              {errors.password.message}
+              {passwordErrorMessage}
             </p>
           )}
 

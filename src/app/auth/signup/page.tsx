@@ -9,6 +9,14 @@ import useLoading from "@/hooks/useLoading";
 import Loader from "@/components/ui/loader/loader";
 import Passwordinput from "@/components/input-password";
 import { delay } from "@/helpers/delay";
+import { getErrorMessage } from "@/helpers/get-error-message";
+
+interface RegisterUserFormValues {
+  image: string;
+  name: string;
+  email: string;
+  password: string;
+}
 
 const RegisterPage = () => {
   const {
@@ -16,13 +24,13 @@ const RegisterPage = () => {
     formState: { errors },
     handleSubmit,
     watch,
-  } = useForm();
+  } = useForm<RegisterUserFormValues>();
 
   const { loading, startLoading, stopLoading } = useLoading();
 
   const router = useRouter();
 
-  const onSubmit = handleSubmit(async (data) => {
+  const onSubmit = handleSubmit(async (data: RegisterUserFormValues) => {
     startLoading();
     await delay(2000);
 
@@ -40,6 +48,10 @@ const RegisterPage = () => {
   });
 
   const password = watch("password", "");
+
+  const emailErrorMessage = getErrorMessage(errors.email);
+  const imageErrorMessage = getErrorMessage(errors.image);
+  const nameErrorMessage = getErrorMessage(errors.name);
 
   return (
     <form
@@ -60,8 +72,8 @@ const RegisterPage = () => {
             type="url"
             placeholder="https://url-de-imagen"
           />
-          {errors.image && (
-            <p className="mt-2 text-sm text-red-500">{errors.image.message}</p>
+          {imageErrorMessage && (
+            <p className="mt-2 text-sm text-red-500">{imageErrorMessage}</p>
           )}
 
           <label className="mt-5">Nombre</label>
@@ -73,8 +85,8 @@ const RegisterPage = () => {
             type="text"
             placeholder="John Doe"
           />
-          {errors.name && (
-            <p className="mt-2 text-sm text-red-500">{errors.name.message}</p>
+          {nameErrorMessage && (
+            <p className="mt-2 text-sm text-red-500">{nameErrorMessage}</p>
           )}
 
           <label className="mt-5">Email</label>
@@ -90,8 +102,8 @@ const RegisterPage = () => {
             type="email"
             placeholder="tuemail@gmail.com"
           />
-          {errors.email && (
-            <p className="mt-2 text-sm text-red-500">{errors.email.message}</p>
+          {emailErrorMessage && (
+            <p className="mt-2 text-sm text-red-500">{emailErrorMessage}</p>
           )}
 
           <Passwordinput
