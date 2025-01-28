@@ -73,5 +73,8 @@ export default {
       }
       return session;
     },
+    authorized: async ({ auth }) => {
+      return !!auth;
+    },
   },
 } satisfies NextAuthConfig;
