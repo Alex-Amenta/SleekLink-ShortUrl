@@ -1,11 +1,10 @@
-// @ts-nocheck
-
 "use client";
 import { toast } from "react-toastify";
 import CustomHr from "../custom-hr";
 import AnimationModal from "../animations/animation-modal";
 import { useForm } from "react-hook-form";
 import { useUrlStore } from "@/zustand/store";
+import { getErrorMessage } from "@/helpers/get-error-message";
 
 interface NormalUrlModal {
   isOpen: boolean;
@@ -34,6 +33,9 @@ const NormalUrlModal = ({ isOpen, onRequestClose }: NormalUrlModal) => {
     }
   });
 
+  const titleErrorMessage = getErrorMessage(errors.title);
+  const originalUrlErrorMessage = getErrorMessage(errors.oiriginalUrl);
+
   return (
     <AnimationModal isOpen={isOpen} onRequestClose={onRequestClose}>
       <h2 className="text-center font-bold text-2xl">Acortar URL</h2>
@@ -46,8 +48,8 @@ const NormalUrlModal = ({ isOpen, onRequestClose }: NormalUrlModal) => {
           type="text"
           placeholder="LinkShopify"
         />
-        {errors.title && (
-          <p className="mt-2 text-sm text-red-500">{errors.title.message}</p>
+        {titleErrorMessage && (
+          <p className="mt-2 text-sm text-red-500">{titleErrorMessage}</p>
         )}
 
         <label className="mt-4 font-semibold">Tu URL:</label>
@@ -57,10 +59,8 @@ const NormalUrlModal = ({ isOpen, onRequestClose }: NormalUrlModal) => {
           type="url"
           placeholder="Ejemplo: https://tu-url.com/"
         />
-        {errors.originalUrl && (
-          <p className="mt-2 text-sm text-red-500">
-            {errors.originalUrl.message}
-          </p>
+        {originalUrlErrorMessage && (
+          <p className="mt-2 text-sm text-red-500">{originalUrlErrorMessage}</p>
         )}
 
         <div className="mt-10 flex justify-end items-center gap-4">

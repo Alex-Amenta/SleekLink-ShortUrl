@@ -6,7 +6,7 @@ export interface Url {
   countClick: number;
   createdAt: Date;
   active: boolean;
-  expirationDate: Date;
+  expirationDate: Date | null;
 }
 
 export interface UrlData extends Url {
@@ -38,7 +38,7 @@ export interface UrlStore {
   updateStatusUrl: (
     id: string,
     active: boolean
-  ) => Promise<{ success: boolean; message?: string }>;
+  ) => Promise<{ success: boolean; message?: string, error?: string}>;
 }
 
 export interface ModalStore {

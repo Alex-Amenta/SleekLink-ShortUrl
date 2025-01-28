@@ -10,7 +10,7 @@ import CopyText from "./copy-text";
 interface TooltipUrlProps {
   textHover: string;
   content: string;
-};
+}
 
 const TooltipUrl = ({ textHover, content }: TooltipUrlProps) => {
   const truncateUrl = (url: string, maxLength = 40) => {

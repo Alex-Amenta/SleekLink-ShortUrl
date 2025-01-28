@@ -1,9 +1,7 @@
-// @ts-nocheck
-
 import { delay } from "@/helpers/delay";
 import axios from "axios";
 import { create } from "zustand";
-import { ModalStore, UrlStore } from "$/types/url";
+import { ModalStore, Url, UrlStore } from "$/types/url";
 import {
   createShortUrl as postShortUrl,
   getUrlsByUserEmail,
@@ -60,7 +58,9 @@ export const useUrlStore = create<UrlStore>((set, get) => ({
               : state.urls,
             nonAuthUrls: result.data?.user_id
               ? state.nonAuthUrls
-              : [result.data, ...state.nonAuthUrls],
+              : result.data
+              ? [result.data, ...state.nonAuthUrls]
+              : state.nonAuthUrls,
             shortUrl: result.data,
             loading: false,
           };
@@ -78,13 +78,18 @@ export const useUrlStore = create<UrlStore>((set, get) => ({
       }
     } catch (error: unknown) {
       console.error("Error al crear URL:", error);
-      const errorMessage =
-        (error as any)?.message || "An unexpected error occurred";
-      set({
-        error: errorMessage,
-        loading: false,
-      });
-      return { success: false, message: errorMessage };
+      if (error instanceof Error) {
+        set({
+          error: error.message || "An error occurred",
+          loading: false,
+        });
+      } else {
+        set({
+          error: "Unknown error occurred",
+          loading: false,
+        });
+      }
+      return { success: false, error: "Unknown error occurred" };
     }
   },
 
@@ -103,12 +108,17 @@ export const useUrlStore = create<UrlStore>((set, get) => ({
         isLoaded: true,
       });
     } catch (error) {
-      set({
-        error: error.response
-          ? error.response.data.message
-          : "An error occurred",
-        loading: false,
-      });
+      if (error instanceof Error) {
+        set({
+          error: error.message || "An error occurred",
+          loading: false,
+        });
+      } else {
+        set({
+          error: "Unknown error occurred",
+          loading: false,
+        });
+      }
     }
   },
 
@@ -123,16 +133,25 @@ export const useUrlStore = create<UrlStore>((set, get) => ({
         nonAuthUrls: response.data,
       });
     } catch (error) {
-      set({
-        error: error.response
-          ? error.response.data.message
-          : "Error fetching Urls anonymous",
-        loading: false,
-      });
+      // Aquí validamos que 'error' sea del tipo AxiosError
+      if (axios.isAxiosError(error)) {
+        set({
+          error: error.response
+            ? error.response.data.message
+            : "Error fetching Urls anonymous",
+          loading: false,
+        });
+      } else {
+        // En caso de que no sea un error de Axios, podemos manejarlo de otra manera
+        set({
+          error: "Unknown error occurred",
+          loading: false,
+        });
+      }
     }
   },
 
-  filteredUrls: () => {
+  filteredUrls: (): Url[] => {
     const { urls, searchTerm } = useUrlStore.getState();
     return urls.filter((url) =>
       url.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -156,13 +175,19 @@ export const useUrlStore = create<UrlStore>((set, get) => ({
         return { success: false, error: "Failed to delete URL" };
       }
     } catch (error) {
-      console.error("Error updating status URL:", error);
-      set({
-        error: error.response
-          ? error.response.data.message
-          : "An error occurred while updating status the URL",
-        loading: false,
-      });
+      if (error instanceof Error) {
+        set({
+          error: error.message || "An error occurred",
+          loading: false,
+        });
+        return { success: false, error: error.message || "An error occurred" }; // Devolvemos un objeto en todos los casos
+      } else {
+        set({
+          error: "Unknown error occurred",
+          loading: false,
+        });
+        return { success: false, error: "Unknown error occurred" }; // Devolvemos un objeto
+      }
     }
   },
 }));

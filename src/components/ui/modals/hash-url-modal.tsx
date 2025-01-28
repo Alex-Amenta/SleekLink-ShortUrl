@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 "use client";
 
 import { toast } from "react-toastify";
@@ -7,6 +5,7 @@ import AnimationModal from "../animations/animation-modal";
 import CustomHr from "../custom-hr";
 import { useForm } from "react-hook-form";
 import { useUrlStore } from "@/zustand/store";
+import { getErrorMessage } from "@/helpers/get-error-message";
 
 interface HashUrlModal {
   isOpen: boolean;
@@ -35,6 +34,10 @@ const HashUrlModal = ({ isOpen, onRequestClose }: HashUrlModal) => {
     }
   });
 
+  const titleErrorMessage = getErrorMessage(errors.title);
+  const originalUrlErrorMessage = getErrorMessage(errors.oiriginalUrl);
+  const customDomainErrorMessage = getErrorMessage(errors.customDomain);
+
   return (
     <AnimationModal isOpen={isOpen} onRequestClose={onRequestClose}>
       <h2 className="text-center font-bold text-2xl">Acortar URL con hash</h2>
@@ -47,8 +50,8 @@ const HashUrlModal = ({ isOpen, onRequestClose }: HashUrlModal) => {
           type="text"
           placeholder="LinkShopify"
         />
-        {errors.title && (
-          <p className="mt-2 text-sm text-red-500">{errors.title.message}</p>
+        {titleErrorMessage && (
+          <p className="mt-2 text-sm text-red-500">{titleErrorMessage}</p>
         )}
 
         <label className="mt-5">Tu URL:</label>
@@ -58,9 +61,9 @@ const HashUrlModal = ({ isOpen, onRequestClose }: HashUrlModal) => {
           type="url"
           placeholder="Ejemplo: https://tu-url.com/"
         />
-        {errors.originalUrl && (
+        {originalUrlErrorMessage && (
           <p className="mt-2 text-sm text-red-500">
-            {errors.originalUrl.message}
+            {originalUrlErrorMessage}
           </p>
         )}
 
@@ -78,9 +81,9 @@ const HashUrlModal = ({ isOpen, onRequestClose }: HashUrlModal) => {
           type="text"
           placeholder="Ingresa tu marca: mi-marca"
         />
-        {errors.customDomain && (
+        {customDomainErrorMessage && (
           <p className="mt-2 text-sm text-red-500">
-            {errors.customDomain.message}
+            {customDomainErrorMessage}
           </p>
         )}
 

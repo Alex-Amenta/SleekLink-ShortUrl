@@ -1,8 +1,8 @@
-
-import { Session } from "$/types";
+import { Session as User } from "$/types";
 import { prisma } from "@/lib/prisma";
 import axios from "axios";
 import { nanoid } from "nanoid";
+import { Session } from "next-auth";
 
 const BASE_URL = process.env.BASE_URL;
 const MAX_URLS_PER_ANONYMOUS = 5;
@@ -20,8 +20,8 @@ export const formatValidUrl = async (originalUrl: string) => {
 
 export const validateAndCheckDuplicateUrl = async (
   originalUrl: string,
-  userId = null,
-  anonymousId = null
+  userId: string | null | undefined,
+  anonymousId: string | null | undefined
 ) => {
   const isValid = await formatValidUrl(originalUrl);
   if (!isValid) return { success: false, message: "URL no válida!" };
@@ -41,8 +41,8 @@ export const validateAndCheckDuplicateUrl = async (
 };
 
 export const generateShortUrl = async (
-  customDomain: string,
-  userId: string
+  customDomain: string | null | undefined,
+  userId: string | null | undefined
 ) => {
   if (customDomain) {
     const existingCustomDomain = await prisma.url.findUnique({
@@ -70,7 +70,7 @@ export const generateShortUrl = async (
   };
 };
 
-export const getExpirationDate = async (session: object) => {
+export const getExpirationDate = async (session: Session | null) => {
   const expirationDate = new Date();
   if (session) {
     expirationDate.setDate(expirationDate.getDate() + 30);
@@ -81,13 +81,13 @@ export const getExpirationDate = async (session: object) => {
 };
 
 export const checkUserOrAnonymousLimits = async (
-  session: Session,
+  user: User | undefined,
   anonymousId: string
 ) => {
   let count;
 
-  if (session) {
-    count = await prisma.url.count({ where: { user_id: session.id } });
+  if (user) {
+    count = await prisma.url.count({ where: { user_id: user.id } });
     if (count >= MAX_URLS_PER_USER)
       return {
         success: false,

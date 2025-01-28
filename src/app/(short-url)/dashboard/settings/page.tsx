@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 "use client";
 
 import ConfirmModal from "@/components/ui/modals/confirm-modal";
@@ -14,13 +12,18 @@ import { useForm } from "react-hook-form";
 import Passwordinput from "@/components/input-password";
 import { deleteUserAccount, updateUserAccount } from "@/actions/user";
 
+interface UpdateUserFormValues {
+  name: string;
+  password: string;
+}
+
 const SettingsPage = () => {
   const {
     register,
     formState: { errors },
     handleSubmit,
     watch,
-  } = useForm();
+  } = useForm<UpdateUserFormValues>();
   const { data: session } = useSession();
 
   const isGoogleUser = session?.user?.provider === "google";
@@ -30,20 +33,23 @@ const SettingsPage = () => {
 
   const handleDeleteUser = useCallback(async () => {
     const userId = session?.user?.id;
-    const result = await deleteUserAccount(userId);
 
-    if (result.success) {
-      toast.success(result.message);
-      closeModal();
-      setTimeout(() => {
-        signOut();
-      }, 2000);
-    } else {
-      toast.error(result.message);
+    if (userId) {
+      const result = await deleteUserAccount(userId);
+
+      if (result.success) {
+        toast.success(result.message);
+        closeModal();
+        setTimeout(() => {
+          signOut();
+        }, 2000);
+      } else {
+        toast.error(result.message);
+      }
     }
-  }, [session?.user?.id]);
+  }, [session?.user?.id, closeModal]);
 
-  const handleUpdateUser = handleSubmit(async (data) => {
+  const handleUpdateUser = handleSubmit(async (data: UpdateUserFormValues) => {
     const { name, password } = data;
 
     const userId = session?.user?.id;
@@ -55,22 +61,24 @@ const SettingsPage = () => {
       return;
     }
 
-    const result = await updateUserAccount(userId, data);
+    if (userId) {
+      const result = await updateUserAccount(userId, data);
 
-    if (result.success) {
-      if (password) {
-        toast.success(
-          "Contraseña actualizada con éxito. Por seguridad, se ha cerrado la sesión. Por favor, inicie sesión nuevamente."
-        );
-        setTimeout(() => {
-          signOut();
-        }, 3000);
+      if (result.success) {
+        if (password) {
+          toast.success(
+            "Contraseña actualizada con éxito. Por seguridad, se ha cerrado la sesión. Por favor, inicie sesión nuevamente."
+          );
+          setTimeout(() => {
+            signOut();
+          }, 3000);
+        } else {
+          toast.success(result.message);
+        }
+        setIsChangedPassword(false);
       } else {
-        toast.success(result.message);
+        toast.error(result.message);
       }
-      setIsChangedPassword(false);
-    } else {
-      toast.error(result.message);
     }
   });
 
@@ -109,7 +117,7 @@ const SettingsPage = () => {
              disabled:dark:text-white/70 disabled:dark:bg-white/10 
             mb-5 p-2 rounded-md border w-full md:w-[70%]"
             type="text"
-            defaultValue={session?.user?.name}
+            defaultValue={session?.user?.name ?? ""}
             disabled={isGoogleUser}
           />
 
@@ -119,7 +127,7 @@ const SettingsPage = () => {
           <input
             className="p-2 rounded-md border text-black/70 dark:text-white/70 w-full md:w-[70%] bg-black/10 dark:bg-white/10"
             type="email"
-            defaultValue={session?.user?.email}
+            defaultValue={session?.user?.email ?? ""}
             disabled
           />
           <p className="mt-2 text-sm dark:text-white/70 text-black/70 mb-5">

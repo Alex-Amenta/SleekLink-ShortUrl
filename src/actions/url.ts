@@ -1,5 +1,3 @@
-// @ts-nocheck
-
 "use server";
 
 import { auth } from "$/auth";
@@ -33,7 +31,7 @@ import { Session } from "next-auth";
 // }
 
 export async function getUrlsForAnonymousUser() {
-  const anonymousId = (await getOrCreateAnonymousId())?.value || null;
+  const anonymousId = await getOrCreateAnonymousId();
 
   const urls = await prisma.url.findMany({
     where: {
@@ -73,7 +71,9 @@ export async function getUrlById(urlId: string) {
 
     return url;
   } catch (error) {
-    console.log("Error al obtener url" + error.message);
+    if (error instanceof Error) {
+      console.log("Error al obtener url" + error.message);
+    }
   }
 }
 
@@ -88,7 +88,9 @@ export async function getUrlsByUserEmail() {
 
     return urls;
   } catch (error) {
-    console.log("Error al obtener urls de usario" + error.message);
+    if (error instanceof Error) {
+      console.log("Error al obtener urls de usario" + error.message);
+    }
     return [];
   }
 }
@@ -100,21 +102,19 @@ export async function createShortUrl(data: {
 }) {
   const { title, originalUrl, customDomain } = data;
   try {
-    const session: Session = await auth();
+    const session = await auth();
 
     let userId: string | null = null;
 
     if (session?.user) {
       const userInDb = await prisma.user.findUnique({
-        where: { email: session.user.email },
+        where: { email: session.user.email as string },
       });
       userId = userInDb?.id || null;
     }
 
     // Obtener o crear ID anónimo
-    const anonymousId = session?.user
-      ? null
-      : (await getOrCreateAnonymousId())?.value || null;
+    const anonymousId = session?.user ? null : await getOrCreateAnonymousId();
 
     const existingUrl = await validateAndCheckDuplicateUrl(
       originalUrl,
@@ -165,7 +165,7 @@ export async function createShortUrl(data: {
     console.error("URL shortening error: ", error);
     // Enviar un mensaje de error más amigable para otros errores
     let errorMessage = "Error al intentar acortar esta url";
-    if (error.message) {
+    if (error instanceof Error) {
       errorMessage = error.message;
     }
 

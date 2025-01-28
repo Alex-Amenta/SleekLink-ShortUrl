@@ -1,7 +1,6 @@
-// @ts-nocheck
-
 "use client";
 
+import { getErrorMessage } from "@/helpers/get-error-message";
 import { Eye, EyeOff } from "lucide-react";
 import { useState } from "react";
 import { FieldErrors, UseFormRegister } from "react-hook-form";
@@ -13,13 +12,23 @@ interface PasswordInputProps {
   passwordLabel: string;
 }
 
-const Passwordinput = ({ register, errors, password, passwordLabel }: PasswordInputProps) => {
+const Passwordinput = ({
+  register,
+  errors,
+  password,
+  passwordLabel,
+}: PasswordInputProps) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const toggleShowPassword = () => setShowPassword(!showPassword);
   const toggleShowConfirmPassword = () =>
     setShowConfirmPassword(!showConfirmPassword);
+
+  // Mensajes de error
+  const passwordErrorMessage = getErrorMessage(errors.password);
+  const confirmPasswordErrorMessage = getErrorMessage(errors.confirmPassword);
+
   return (
     <>
       <div className="relative mt-5">
@@ -47,8 +56,8 @@ const Passwordinput = ({ register, errors, password, passwordLabel }: PasswordIn
           {showPassword ? <EyeOff /> : <Eye />}
         </button>
 
-        {errors.password && (
-          <p className="mt-2 text-sm text-red-500">{errors.password?.message}</p>
+        {passwordErrorMessage && (
+          <p className="mt-2 text-sm text-red-500">{passwordErrorMessage}</p>
         )}
       </div>
 
@@ -79,9 +88,9 @@ const Passwordinput = ({ register, errors, password, passwordLabel }: PasswordIn
           {showConfirmPassword ? <EyeOff /> : <Eye />}
         </button>
 
-        {errors.confirmPassword && (
+        {confirmPasswordErrorMessage && (
           <p className="mt-2 text-sm text-red-500">
-            {errors.confirmPassword?.message}
+            {confirmPasswordErrorMessage}
           </p>
         )}
       </div>
