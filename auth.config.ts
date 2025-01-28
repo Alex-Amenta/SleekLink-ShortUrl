@@ -60,6 +60,23 @@ export default {
     }),
   ],
   callbacks: {
+    authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isOnDashboard = nextUrl.pathname.startsWith("/dashboard");
+    
+      if (isOnDashboard) {
+        if (isLoggedIn) {
+          return true; // Permite acceso si está autenticado
+        }
+        // Redirige a login si no está autenticado
+        return Response.redirect(new URL("/auth/login", nextUrl));
+      } else if (isLoggedIn) {
+        // Redirige a /dashboard si el usuario está autenticado pero no está en el dashboard
+        return Response.redirect(new URL("/dashboard", nextUrl));
+      }
+    
+      return true; 
+    },
     async jwt({ token, account }) {
       // Añadir el proveedor al token
       if (account) {
@@ -72,9 +89,6 @@ export default {
         session.user.provider = token.provider;
       }
       return session;
-    },
-    authorized: async ({ auth }) => {
-      return !!auth;
     },
   },
 } satisfies NextAuthConfig;
