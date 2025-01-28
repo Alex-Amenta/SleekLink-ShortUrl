@@ -1,8 +1,7 @@
 import { auth } from "$/auth";
-import { ChildrenProps } from "$/types";
 import { redirect } from "next/navigation";
 
-const DashboardLayout = async ({ children }: { children: ChildrenProps }) => {
+const DashboardLayout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
   console.log(session);
 
