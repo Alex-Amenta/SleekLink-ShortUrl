@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 const useExpirationWarning = (urls: Url[]) => {
   useEffect(() => {
     const expiredUrl = urls.filter(
-      (url) => new Date(url.expirationDate) < new Date()
+      (url) => url.expirationDate && new Date(url.expirationDate) < new Date()
     );
     if (expiredUrl.length > 0) {
       toast.warning(
