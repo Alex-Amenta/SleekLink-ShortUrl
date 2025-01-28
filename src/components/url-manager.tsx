@@ -4,6 +4,7 @@ import { useUrlStore } from "@/zustand/store";
 import UrlCard from "./url-card";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
+import { Url } from "$/types/url";
 
 const UrlManager = () => {
   const { updateStatusUrl, nonAuthUrls, fetchAnonymousUrls } = useUrlStore();
@@ -19,7 +20,7 @@ const UrlManager = () => {
     <>
       {!session &&
         nonAuthUrls.length > 0 &&
-        nonAuthUrls.map((url) => (
+        nonAuthUrls.map((url: Url) => (
           <UrlCard
             key={url.id}
             id={url.id}

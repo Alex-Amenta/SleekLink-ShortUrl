@@ -3,9 +3,8 @@
     "baseUrl": ".",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
-    "strict": false, // Desactiva todas las reglas estrictas
-    "skipLibCheck": true, // Ignora errores en las dependencias
-    "noImplicitAny": false, // Permite el uso de "any"
+    "skipLibCheck": true,
+    "strict": true,
     "noEmit": true,
     "esModuleInterop": true,
     "module": "esnext",

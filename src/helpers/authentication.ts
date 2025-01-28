@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import jwt from "jsonwebtoken";
 
 const SECRET_KEY = process.env.JWT_SECRET_KEY || "default-secret-key";

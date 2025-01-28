@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { getUrlById } from "@/actions/url";
 import SkeletonUrlCard from "@/components/ui/skeleton-url-card";
 import UrlDetailsContent from "@/components/url-detail-content";

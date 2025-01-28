@@ -1,5 +1,6 @@
 "use server";
 
+import { TransformedData } from "$/types/click";
 import { prisma } from "@/lib/prisma";
 
 export async function getClicksByUrls(urlId: string) {
@@ -17,8 +18,8 @@ export async function getClicksByUrls(urlId: string) {
     }
 
     // Transformar los datos
-    const transformedData = clicks.map((item) => ({
-      date: new Date(item.clickedAt).toLocaleDateString("es-ES", {
+    const transformedData: TransformedData[] = clicks.map((item) => ({
+      date: new Date(item.clickedAt!).toLocaleDateString("es-ES", {
         year: "numeric",
         month: "short",
       }),
@@ -33,13 +34,15 @@ export async function getClicksByUrls(urlId: string) {
       }
       acc[date] += curr.clicks;
       return acc;
-    }, {});
+    }, {} as { [key: string]: number });
 
     // Convertir a un arreglo
-    const finalData = Object.keys(groupedData).map((date) => ({
-      date,
-      clicks: groupedData[date],
-    }));
+    const finalData: TransformedData[] = Object.keys(groupedData).map(
+      (date) => ({
+        date,
+        clicks: groupedData[date],
+      })
+    );
 
     return finalData;
   } catch (error) {

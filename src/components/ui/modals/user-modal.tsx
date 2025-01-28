@@ -9,8 +9,9 @@ import AnimatedContainer from "../animations/animated-container";
 import AnimatedItems from "../animations/animated-items";
 import { ThemeIcon, useThemeToggle } from "@/hooks/useThemeToggle";
 import useModal from "@/hooks/useModal";
+import { Session } from "$/types";
 
-const ModalUser = ({ userData }) => {
+const ModalUser = ({ userData }: { userData: Session }) => {
   const { isOpen, closeModal, toggleModal } = useModal("ModalUser");
   const { theme, handleToggleTheme } = useThemeToggle();
 

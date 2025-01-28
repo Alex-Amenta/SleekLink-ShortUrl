@@ -13,10 +13,10 @@ import {
   ChartTooltip,
   ChartTooltipContent,
 } from "@/components/ui/chart";
-import { ClickData } from "$/types/click";
+import { TransformedData } from "$/types/click";
 
 interface ClicksOverTimeChartProps {
-  chartData: ClickData[];
+  chartData: TransformedData[];
 }
 
 const chartConfig = {

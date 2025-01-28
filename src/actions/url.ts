@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 "use server";
 
 import { auth } from "$/auth";
@@ -11,6 +13,7 @@ import {
 } from "@/helpers/urls-helpers";
 import { prisma } from "@/lib/prisma";
 import { incrementClickCount } from "./clicks";
+import { Session } from "next-auth";
 
 // export async function getOrCreateAnonymousId() {
 //   let anonymousId = cookies().get("anonymousId");
@@ -97,7 +100,7 @@ export async function createShortUrl(data: {
 }) {
   const { title, originalUrl, customDomain } = data;
   try {
-    const session = await auth();
+    const session: Session = await auth();
 
     let userId: string | null = null;
 

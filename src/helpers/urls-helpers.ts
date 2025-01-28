@@ -1,3 +1,5 @@
+
+import { Session } from "$/types";
 import { prisma } from "@/lib/prisma";
 import axios from "axios";
 import { nanoid } from "nanoid";
@@ -79,7 +81,7 @@ export const getExpirationDate = async (session: object) => {
 };
 
 export const checkUserOrAnonymousLimits = async (
-  session,
+  session: Session,
   anonymousId: string
 ) => {
   let count;

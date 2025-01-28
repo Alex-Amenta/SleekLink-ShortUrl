@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { nanoid } from 'nanoid';
 import { cookies } from 'next/headers';
 

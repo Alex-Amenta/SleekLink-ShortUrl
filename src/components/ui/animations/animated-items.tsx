@@ -7,7 +7,7 @@ const itemVariants = {
   visible: { opacity: 1, y: 0 },
 };
 
-const AnimatedItems = ({ children }) => {
+const AnimatedItems = ({ children }: { children: React.ReactNode }) => {
   return <motion.div variants={itemVariants}>{children}</motion.div>;
 };
 

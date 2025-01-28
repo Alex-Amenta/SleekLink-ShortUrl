@@ -1,9 +1,10 @@
 "use client";
 
+import { Url } from "$/types/url";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 
-const useExpirationWarning = (urls) => {
+const useExpirationWarning = (urls: Url[]) => {
   useEffect(() => {
     const expiredUrl = urls.filter(
       (url) => new Date(url.expirationDate) < new Date()

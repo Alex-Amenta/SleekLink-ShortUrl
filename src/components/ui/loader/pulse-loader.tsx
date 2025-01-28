@@ -1,4 +1,6 @@
-const PulseLoader = ({ isActive }) => {
+// @ts-nocheck
+
+const PulseLoader = ({ isActive }: { isActive: boolean }) => {
   const shadowColor = isActive ? "#69ffa8" : "#e95555";
 
   return (

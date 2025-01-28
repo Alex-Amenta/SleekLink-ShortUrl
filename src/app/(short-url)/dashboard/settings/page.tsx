@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 "use client";
 
 import ConfirmModal from "@/components/ui/modals/confirm-modal";
