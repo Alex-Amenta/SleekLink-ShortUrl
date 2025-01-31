@@ -13,23 +13,6 @@ import { prisma } from "@/lib/prisma";
 import { incrementClickCount } from "./clicks";
 import { Session } from "next-auth";
 
-// export async function getOrCreateAnonymousId() {
-//   let anonymousId = cookies().get("anonymousId");
-
-//   if (!anonymousId) {
-//     anonymousId = nanoid();
-//     cookies().set({
-//       name: "anonymousId",
-//       value: anonymousId,
-//       httpOnly: true,
-//       secure: process.env.NODE_ENV === "production", // Solo en HTTPS
-//       maxAge: 60 * 60 * 24 * 30, // 30 days
-//     });
-//   }
-
-//   return anonymousId;
-// }
-
 export async function getUrlsForAnonymousUser() {
   const anonymousId = await getOrCreateAnonymousId();
 
